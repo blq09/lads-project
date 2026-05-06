@@ -1,0 +1,194 @@
+const { createApp } = Vue;
+
+createApp({
+    data() {
+        return {
+            levelForm: {
+                currentLevel: 0,
+                targetLevel: 70
+            },
+            pullForm: {
+                currentPity: 51,
+                bannerType: "rerun"
+            },
+            expForm: {
+                nBottles: 0,
+                rBottles: 0,
+                srBottles: 745,
+                ssrBottles: 9
+            },
+            levelOptions: [0, 10, 20, 30, 40, 50, 60, 70, 80],
+            bannerOptions: [
+                { value: "limited", label: "Limited" },
+                { value: "rerun", label: "Rerun" },
+                { value: "solo", label: "Solo" },
+                { value: "myth", label: "Myth" },
+                { value: "multi", label: "Multi" },
+                { value: "birthday", label: "Birthday" }
+            ]
+        };
+    },
+    computed: {
+        materialResults() {
+            return window.materialsApi.computeNeededMaterials(
+                this.levelForm.currentLevel,
+                this.levelForm.targetLevel
+            );
+        },
+        pullResults() {
+            return window.materialsApi.savedPullsNeeded(
+                this.pullForm.currentPity,
+                this.pullForm.bannerType
+            );
+        },
+        currentExp() {
+            return window.materialsApi.getCurrentEXP(
+                this.expForm.nBottles,
+                this.expForm.rBottles,
+                this.expForm.srBottles,
+                this.expForm.ssrBottles
+            );
+        },
+        levelWarning() {
+            return Number(this.levelForm.targetLevel) <= Number(this.levelForm.currentLevel)
+                ? "Target level should be higher than the current level."
+                : "";
+        }
+    },
+    methods: {
+        formatNumber(value) {
+            return new Intl.NumberFormat().format(value);
+        }
+    },
+    template: `
+        <main class="page-shell">
+            <section class="hero-card">
+                <p class="eyebrow">Vue utility app</p>
+                <h1>Materials planner for quick Love and Deepspace checks.</h1>
+                <p class="hero-copy">
+                    This interface wraps your existing calculator functions into a simple dashboard for level planning,
+                    banner pull estimates, and EXP bottle totals.
+                </p>
+            </section>
+
+            <section class="panel-grid">
+                <article class="panel">
+                    <div class="panel-header">
+                        <p class="panel-kicker">Upgrade</p>
+                        <h2>Needed materials</h2>
+                    </div>
+
+                    <div class="field-grid">
+                        <label>
+                            <span>Current level</span>
+                            <select v-model.number="levelForm.currentLevel">
+                                <option v-for="level in levelOptions" :key="'current-' + level" :value="level">
+                                    {{ level }}
+                                </option>
+                            </select>
+                        </label>
+
+                        <label>
+                            <span>Target level</span>
+                            <select v-model.number="levelForm.targetLevel">
+                                <option v-for="level in levelOptions.slice(1)" :key="'target-' + level" :value="level">
+                                    {{ level }}
+                                </option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <p v-if="levelWarning" class="warning">{{ levelWarning }}</p>
+
+                    <dl class="stats-list">
+                        <div>
+                            <dt>EXP</dt>
+                            <dd>{{ formatNumber(materialResults.EXP) }}</dd>
+                        </div>
+                        <div>
+                            <dt>Gold</dt>
+                            <dd>{{ formatNumber(materialResults.Gold) }}</dd>
+                        </div>
+                        <div>
+                            <dt>N Crystal</dt>
+                            <dd>{{ formatNumber(materialResults.N_Crystal) }}</dd>
+                        </div>
+                        <div>
+                            <dt>R Crystal</dt>
+                            <dd>{{ formatNumber(materialResults.R_Crystal) }}</dd>
+                        </div>
+                        <div>
+                            <dt>SR Crystal</dt>
+                            <dd>{{ formatNumber(materialResults.SR_Crystal) }}</dd>
+                        </div>
+                    </dl>
+                </article>
+
+                <article class="panel accent-panel">
+                    <div class="panel-header">
+                        <p class="panel-kicker">Banner</p>
+                        <h2>Saved pulls needed</h2>
+                    </div>
+
+                    <div class="field-grid">
+                        <label>
+                            <span>Current pity</span>
+                            <input v-model.number="pullForm.currentPity" type="number" min="0" max="70">
+                        </label>
+
+                        <label>
+                            <span>Banner type</span>
+                            <select v-model="pullForm.bannerType">
+                                <option v-for="banner in bannerOptions" :key="banner.value" :value="banner.value">
+                                    {{ banner.label }}
+                                </option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <dl class="stats-list compact">
+                        <div>
+                            <dt>Tickets</dt>
+                            <dd>{{ formatNumber(pullResults.tickets) }}</dd>
+                        </div>
+                        <div>
+                            <dt>Diamonds</dt>
+                            <dd>{{ formatNumber(pullResults.diamonds) }}</dd>
+                        </div>
+                    </dl>
+                </article>
+
+                <article class="panel wide-panel">
+                    <div class="panel-header">
+                        <p class="panel-kicker">Inventory</p>
+                        <h2>Current EXP total</h2>
+                    </div>
+
+                    <div class="field-grid bottles-grid">
+                        <label>
+                            <span>N Bottles</span>
+                            <input v-model.number="expForm.nBottles" type="number" min="0">
+                        </label>
+                        <label>
+                            <span>R Bottles</span>
+                            <input v-model.number="expForm.rBottles" type="number" min="0">
+                        </label>
+                        <label>
+                            <span>SR Bottles</span>
+                            <input v-model.number="expForm.srBottles" type="number" min="0">
+                        </label>
+                        <label>
+                            <span>SSR Bottles</span>
+                            <input v-model.number="expForm.ssrBottles" type="number" min="0">
+                        </label>
+                    </div>
+
+                    <div class="exp-total">
+                        <span>Total EXP</span>
+                        <strong>{{ formatNumber(currentExp) }}</strong>
+                    </div>
+                </article>
+            </section>
+        </main>
+    `
+}).mount("#app");
