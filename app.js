@@ -17,6 +17,17 @@ createApp({
                 srBottles: 0,
                 ssrBottles: 0
             },
+            diamondForm: {
+                currentDiamonds: 0,
+                currentWishes: 0,
+                targetDate: "",
+                hasAurumPass: false,
+                hasAurumWeekly: false,
+                hasDiamondGift: false,
+                hasWishGift: false,
+                stagesCleared: 0,
+                starsEarned: 0
+            },
             levelOptions: [0, 10, 20, 30, 40, 50, 60, 70, 80],
             bannerOptions: [
                 { value: "rerun", label: "Rerun" },
@@ -52,6 +63,38 @@ createApp({
             return Number(this.levelForm.targetLevel) <= Number(this.levelForm.currentLevel)
                 ? "Target level should be higher than the current level."
                 : "";
+        },
+        diamondEstimation() {
+            if (!this.diamondForm.targetDate) return { diamonds: 0, wishes: 0 };
+
+            const start = new Date();
+            const end = new Date(this.diamondForm.targetDate);
+            const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 0) return { diamonds: 0, wishes: 0 };
+
+            return window.materialsApi.estimateDiamonds(diffDays, {
+                hasAurum: this.diamondForm.hasAurum,
+                hasClassic: this.diamondForm.hasClassic,
+                hasDiamondGift: this.diamondForm.hasDiamondGift,
+                hasWishGift: this.diamondForm.hasWishGift,
+                hasPrecious: this.diamondForm.hasPrecious,
+                shcStars: this.diamondForm.shcStars,
+                shcClears: this.diamondForm.shcClears
+            });
+        },
+        savingsResult() {
+            if (!this.diamondForm.targetDate) return { totalDiamonds: 0, totalWishes: 0 };
+
+            return window.materialsApi.estimateDiamonds(
+                new Date(),
+                new Date(this.diamondForm.targetDate),
+                this.diamondForm
+            );
+        },
+        combinedPulls() {
+            const fromDiamonds = Math.floor(this.savingsResult.totalDiamonds / 150);
+            return fromDiamonds + this.savingsResult.totalWishes;
         }
     },
     methods: {
@@ -182,6 +225,51 @@ createApp({
                         <strong>{{ formatNumber(currentExp) }}</strong>
                     </div>
                 </article>
+            <article class="panel wide-panel">
+    <div class="panel-header">
+        <p class="panel-kicker">Planner</p>
+        <h2>Diamond Savings Estimator</h2>
+    </div>
+
+    <div class="field-grid">
+        <label>
+            <span>Target Date</span>
+            <input type="date" v-model="diamondForm.targetDate">
+        </label>
+        <label>
+            <span>Current Diamonds</span>
+            <input type="number" v-model.number="diamondForm.currentDiamonds">
+        </label>
+        <label>
+            <span>SHC Stars (Max 33)</span>
+            <input type="number" v-model.number="diamondForm.starsEarned" max="33">
+        </label>
+                <label>
+            <span>SHC Clears (Max 12)</span>
+            <input type="number" v-model.number="diamondForm.stagesCleares" max="12">
+        </label>
+    </div>
+
+    <div class="field-grid" style="margin-top: 15px;">
+        <label class="checkbox-label">
+            <input type="checkbox" v-model="diamondForm.hasAurumPass"> <span>Aurum Pass</span>
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" v-model="diamondForm.hasDiamondGift"> <span>Annual Weekly Diamond Gift</span>
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" v-model="diamondForm.hasWishGift"> <span>Annual Weekly Wish Gift</span>
+        </label>
+        <label class="checkbox-label" v-if="diamondForm.hasAurumPass">
+            <input type="checkbox" v-model="diamondForm.hasAurumWeekly"> <span>Aurum Gift</span>
+        </label>
+    </div>
+
+    <div class="exp-total">
+        <span>Estimated Savings</span>
+        <strong>{{ formatNumber(savingsResult.totalDiamonds) }} 💎 / {{ combinedPulls }} Pulls</strong>
+    </div>
+</article>
             </section>
         </main>
     `
