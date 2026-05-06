@@ -65,6 +65,10 @@ function getCurrentEXP(nBottles, rBottles, srBottles, ssrBottles) {
     return Number(nBottles) * 10 + Number(rBottles) * 50 + Number(srBottles) * 250 + Number(ssrBottles) * 1000;
 }
 
+// Placeholder for function to compute an estimation for diamonds on a certain date (also consider wish tickets)
+
+// Placeholder for function which tells you what packs to buy considering your budget
+
 window.materialsApi = {
     computeNeededMaterials: computeNeededMaterials,
     savedPullsNeeded: savedPullsNeeded,
