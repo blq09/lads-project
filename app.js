@@ -8,18 +8,17 @@ createApp({
                 targetLevel: 70
             },
             pullForm: {
-                currentPity: 51,
+                currentPity: 70,
                 bannerType: "rerun"
             },
             expForm: {
                 nBottles: 0,
                 rBottles: 0,
-                srBottles: 745,
-                ssrBottles: 9
+                srBottles: 0,
+                ssrBottles: 0
             },
             levelOptions: [0, 10, 20, 30, 40, 50, 60, 70, 80],
             bannerOptions: [
-                { value: "limited", label: "Limited" },
                 { value: "rerun", label: "Rerun" },
                 { value: "solo", label: "Solo" },
                 { value: "myth", label: "Myth" },
@@ -63,12 +62,7 @@ createApp({
     template: `
         <main class="page-shell">
             <section class="hero-card">
-                <p class="eyebrow">Vue utility app</p>
                 <h1>Materials planner for quick Love and Deepspace checks.</h1>
-                <p class="hero-copy">
-                    This interface wraps your existing calculator functions into a simple dashboard for level planning,
-                    banner pull estimates, and EXP bottle totals.
-                </p>
             </section>
 
             <section class="panel-grid">
@@ -127,7 +121,7 @@ createApp({
                 <article class="panel accent-panel">
                     <div class="panel-header">
                         <p class="panel-kicker">Banner</p>
-                        <h2>Saved pulls needed</h2>
+                        <h2>Pulls needed to guarantee myth pair or desired 5* card</h2>
                     </div>
 
                     <div class="field-grid">
