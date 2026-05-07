@@ -72,13 +72,18 @@ const monthlyRewards = {
 // SHC resets every 14 days from this fixed reference
 const SHC_REFERENCE_DATE = new Date("2026-02-09");
 
+function toLocalDay(value) {
+    const date = new Date(value);
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
 // Placeholder for function to compute an estimation for diamonds on a certain date (also consider wish tickets)
 function estimateDiamonds(startDate, endDate, options) {
     let total = options.currentDiamonds || 0;
     let wishes = options.currentWishes || 0;
     
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = toLocalDay(startDate);
+    const end = toLocalDay(endDate);
     
     let current = new Date(start);
     current.setDate(current.getDate() + 1); // Start counting from tomorrow

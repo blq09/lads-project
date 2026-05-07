@@ -241,12 +241,16 @@ createApp({
             <input type="number" v-model.number="diamondForm.currentDiamonds">
         </label>
         <label>
+            <span>Current Wishes</span>
+            <input type="number" v-model.number="diamondForm.currentWishes">
+        </label>
+        <label>
             <span>SHC Stars (Max 33)</span>
             <input type="number" v-model.number="diamondForm.starsEarned" max="33">
         </label>
                 <label>
             <span>SHC Clears (Max 12)</span>
-            <input type="number" v-model.number="diamondForm.stagesCleares" max="12">
+            <input type="number" v-model.number="diamondForm.stagesCleared" max="12">
         </label>
     </div>
 
