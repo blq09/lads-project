@@ -273,7 +273,7 @@ createApp({
         <span>Estimated Savings</span>
         <strong>{{ formatNumber(savingsResult.totalDiamonds) }} <img class="inline-resource-icon diamond-icon" src="./Diamond.webp" alt="Diamonds"> / {{ formatNumber(combinedPulls) }} Pulls</strong>
         <strong>{{ formatNumber(savingsResult.totalWishes) }} <img class="inline-resource-icon wish-icon" src="./Deepspace_Wish_Icon.webp" alt="Wish Tickets"></strong>
-        <strong>This makes {{ formatNumber(savingsResult.totalDiamonds + savingsResult.totalWishes) }} total pulls</strong>
+        <strong>This makes {{ formatNumber(combinedPulls + savingsResult.totalWishes) }} total pulls</strong>
     </div>
 </article>
             </section>
