@@ -65,12 +65,81 @@ function getCurrentEXP(nBottles, rBottles, srBottles, ssrBottles) {
     return Number(nBottles) * 10 + Number(rBottles) * 50 + Number(srBottles) * 250 + Number(ssrBottles) * 1000;
 }
 
+const monthlyRewards = {
+    3: 10, 8: 10, 13: 15, 15: 100, 18: 15, 23: 20, 28: 20
+};
+
+// SHC resets every 14 days from this fixed reference
+const SHC_REFERENCE_DATE = new Date("2026-02-09");
+
+function toLocalDay(value) {
+    const date = new Date(value);
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
 // Placeholder for function to compute an estimation for diamonds on a certain date (also consider wish tickets)
+function estimateDiamonds(startDate, endDate, options) {
+    let total = options.currentDiamonds || 0;
+    let wishes = options.currentWishes || 0;
+    
+    const start = toLocalDay(startDate);
+    const end = toLocalDay(endDate);
+    
+    let current = new Date(start);
+    current.setDate(current.getDate() + 1); // Start counting from tomorrow
+
+    let mondayCount = 0;
+    let shcCycles = 0;
+
+    // Loop through each day to calculate Daily and Monthly rewards accurately
+    while (current <= end) {
+        // 1. Daily Income (Base 50 + Aurum 100 + Gift 150)
+        total += 50;
+        if (options.hasAurumPass) total += 100;
+        if (options.hasAurumWeekly) total += 150;
+
+        // 2. Monthly Check-in
+        const dayOfMonth = current.getDate();
+        if (monthlyRewards[dayOfMonth]) {
+            total += monthlyRewards[dayOfMonth];
+        }
+
+        // 3. Count Mondays for Weekly
+        if (current.getDay() === 1) { // 1 is Monday
+            mondayCount++;
+        }
+
+        // 4. SHC Cycles (Resets every 14 days from reference)
+        const daysSinceRef = Math.floor((current - SHC_REFERENCE_DATE) / (1000 * 60 * 60 * 24));
+        if (daysSinceRef % 14 === 0) {
+            shcCycles++;
+        }
+
+        current.setDate(current.getDate() + 1);
+    }
+
+    // Apply Weekly Totals (Base 210 + Gift 120)
+    let weeklyRate = 210; 
+    if (options.hasDiamondGift) weeklyRate += 120;
+    total += (mondayCount * weeklyRate);
+
+    if (options.hasWishGift) {
+        wishes += mondayCount;
+    }
+
+    // Apply SHC Rewards
+    const starReward = options.starsEarned * 50; // Simplified from your script for Vue integration
+    const stageReward = options.stagesCleared * 20;
+    total += (shcCycles * (starReward + stageReward));
+
+    return { totalDiamonds: total, totalWishes: wishes };
+}
 
 // Placeholder for function which tells you what packs to buy considering your budget
 
 window.materialsApi = {
     computeNeededMaterials: computeNeededMaterials,
     savedPullsNeeded: savedPullsNeeded,
-    getCurrentEXP: getCurrentEXP
+    getCurrentEXP: getCurrentEXP,
+    estimateDiamonds: estimateDiamonds,
 };
