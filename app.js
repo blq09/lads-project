@@ -94,7 +94,7 @@ createApp({
         },
         combinedPulls() {
             const fromDiamonds = Math.floor(this.savingsResult.totalDiamonds / 150);
-            return fromDiamonds + this.savingsResult.totalWishes;
+            return fromDiamonds;
         }
     },
     methods: {
@@ -228,7 +228,7 @@ createApp({
             <article class="panel wide-panel">
     <div class="panel-header">
         <p class="panel-kicker">Planner</p>
-        <h2>Diamond Savings Estimator</h2>
+        <h2>Diamond Calculator (Estimation)</h2>
     </div>
 
     <div class="field-grid">
@@ -241,7 +241,7 @@ createApp({
             <input type="number" v-model.number="diamondForm.currentDiamonds">
         </label>
         <label>
-            <span>Current Wishes</span>
+            <span>Current Wish Tickets</span>
             <input type="number" v-model.number="diamondForm.currentWishes">
         </label>
         <label>
@@ -271,7 +271,9 @@ createApp({
 
     <div class="exp-total">
         <span>Estimated Savings</span>
-        <strong>{{ formatNumber(savingsResult.totalDiamonds) }} 💎 / {{ combinedPulls }} Pulls</strong>
+        <strong>{{ formatNumber(savingsResult.totalDiamonds) }} <img class="inline-resource-icon diamond-icon" src="./Diamond.webp" alt="Diamonds"> / {{ formatNumber(combinedPulls) }} Pulls</strong>
+        <strong>{{ formatNumber(savingsResult.totalWishes) }} <img class="inline-resource-icon wish-icon" src="./Deepspace_Wish_Icon.webp" alt="Wish Tickets"></strong>
+        <strong>This makes {{ formatNumber(savingsResult.totalDiamonds + savingsResult.totalWishes) }} total pulls</strong>
     </div>
 </article>
             </section>

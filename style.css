@@ -219,6 +219,23 @@ dd,
     font-weight: 700;
 }
 
+.inline-resource-icon {
+    display: inline-block;
+    object-fit: contain;
+}
+
+.diamond-icon {
+    width: 0.95em;
+    height: 0.95em;
+    vertical-align: -0.08em;
+}
+
+.wish-icon {
+    width: 1.05em;
+    height: 1.05em;
+    vertical-align: -0.12em;
+}
+
 .exp-total {
     display: flex;
     align-items: center;
