@@ -100,6 +100,16 @@ createApp({
     methods: {
         formatNumber(value) {
             return new Intl.NumberFormat().format(value);
+        },
+        clampDiamondValue(field, min, max) {
+            const value = Number(this.diamondForm[field]);
+
+            if (Number.isNaN(value)) {
+                this.diamondForm[field] = min;
+                return;
+            }
+
+            this.diamondForm[field] = Math.min(Math.max(value, min), max);
         }
     },
     template: `
@@ -246,11 +256,11 @@ createApp({
         </label>
         <label>
             <span>SHC Stars (Max 33)</span>
-            <input type="number" v-model.number="diamondForm.starsEarned" max="33">
+            <input type="number" v-model.number="diamondForm.starsEarned" min="0" max="33" @input="clampDiamondValue('starsEarned', 0, 33)">
         </label>
                 <label>
             <span>SHC Clears (Max 12)</span>
-            <input type="number" v-model.number="diamondForm.stagesCleared" max="12">
+            <input type="number" v-model.number="diamondForm.stagesCleared" min="0" max="12" @input="clampDiamondValue('stagesCleared', 0, 12)">
         </label>
     </div>
 
